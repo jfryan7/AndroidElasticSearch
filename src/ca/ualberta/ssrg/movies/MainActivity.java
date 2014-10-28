@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
 	private ListView movieList;
 	private List<Movie> movies;
 	private ArrayAdapter<Movie> moviesViewAdapter;
+	
+	private EditText SearchText;
 
 	private IMovieManager movieManager;
 
@@ -87,6 +89,9 @@ public class MainActivity extends Activity {
 
 		// Refresh the list when visible
 		// TODO: Search all
+		movies.clear();
+		Thread thread = new SearchThread("");
+		thread.start();
 		
 	}
 
@@ -98,8 +103,11 @@ public class MainActivity extends Activity {
 		movies.clear();
 
 		// TODO: Extract search query from text view
-		
+		SearchText = (EditText) findViewById(R.id.editText1);
+				
 		// TODO: Run the search thread
+		Thread thread = new SearchThread(SearchText.getText().toString());
+		thread.start();
 		
 	}
 	
@@ -126,6 +134,20 @@ public class MainActivity extends Activity {
 
 	class SearchThread extends Thread {
 		// TODO: Implement search thread
+		private String search;
+		
+		public SearchThread(String s) {
+			search = s;
+		}
+		
+		@Override
+		public void run() {
+			movies.clear();
+			movies.addAll(movieManager.searchMovies(search,null));
+			
+			runOnUiThread(doUpdateGUIList);
+		}
+		
 		
 	}
 
